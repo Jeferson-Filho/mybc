@@ -5,9 +5,11 @@
 #include <string.h>
 #include <lexer.h>
 
+//Variáveis Globais
 char lexeme[MAXIDLEN + 1];
 
 /*
+ * Verifica se o lexeme é um identificador (ID)
  * ID = [A-Za-z][A-Za-z0-9]*
  */
 int isID(FILE *tape)
@@ -29,6 +31,7 @@ int isID(FILE *tape)
 }
 
 /*
+ * Verifica se o lexeme é um número decimal
  * DEC = [1-9][0-9]* | 0
  */
 int isDEC(FILE *tape)
@@ -51,12 +54,10 @@ int isDEC(FILE *tape)
     return 0;
 }
 
-// fpoint = DEC\.[0-9]* | \.[0-9][0-9]*
-// flt = fpoint EE? | DEC EE
-// EE = [eE]['+''-']?[0-9][0-9]*
-// test input: 3e+
-//             012
-
+/*
+ * Função que determina se o lexeme contém uma notação exponencial (EE)
+ * EE = [eE]['+''-']?[0-9][0-9]*
+*/
 int isEE(FILE *tape)
 {
     int i = strlen(lexeme);
@@ -94,6 +95,9 @@ int isEE(FILE *tape)
     return 0;
 }
 
+/*
+ * Função que determina se o lexeme é um numero, podendo ser inteiro ou ponto flutuante 
+*/
 int isNUM(FILE *tape)
 {
     int token = isDEC(tape);
@@ -187,7 +191,8 @@ int isOCT(FILE *tape)
 }
 
 /*
- * HEX = [1-9][0-9]* | 0
+ * Função para determinar se o lexeme é hexadecimal
+ * HEX = '0'[Xx][1-9][0-9]* | 0
  */
 int isHEX(FILE *tape)
 {
@@ -221,13 +226,17 @@ int isHEX(FILE *tape)
 }
 
 /*
- * FLT =
+ * fpoint = DEC\.[0-9]* | \.[0-9][0-9]*
+ * flt = fpoint EE? | DEC EE
  */
 int isFLT(FILE *tape)
 {
     
 }
 
+/*
+ * Função que ignora espaços em branco
+*/
 void skipspaces(FILE *tape)
 {
     int head;
@@ -238,6 +247,9 @@ void skipspaces(FILE *tape)
     ungetc(head, tape);
 }
 
+/*
+ * Função que determina o próximo token a ser lido
+*/
 int gettoken(FILE *source)
 {
     int token;
@@ -245,6 +257,7 @@ int gettoken(FILE *source)
     skipspaces(source);
 
     if ((token = isID(source))) return token;
+    if ((token = isNUM(source))) return token;
     if ((token = isDEC(source))) return token;
     if ((token = isOCT(source))) return token;
     if ((token = isHEX(source))) return token;

@@ -14,7 +14,8 @@ Uma linguagem de programação deva ser uma linguagem decidível, pois o compila
 
 ### 2. O que vem a ser um compilador bootstraping? Ilustre sua resposta com um exemplo prático de como se criar um compilador.
 É um compilador construído na própria linguagem que ele compila
-TODO: Adicionar ilustração
+
+<img src="image.png" alt="alt text" width="320"/>
 
 ### 3. Qual o papel de um analisador léxico num compilador? Podemos dizer que um parser é um decisor sintático de uma linguagem de programação? Justifique.
 Qual o papel de um analisador léxico num compilador?

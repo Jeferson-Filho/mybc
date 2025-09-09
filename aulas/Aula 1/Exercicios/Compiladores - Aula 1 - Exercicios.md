@@ -1,7 +1,7 @@
 # Questionário
 
 ### Web page by Gemini
-https://g.co/gemini/share/ba667a3a0d28
+https://gemini.google.com/share/fe94945071ae
 
 ### 1. O que vem a ser um compilador? Podemos dizer que um compilador é uma máquina de Turing? Neste caso, faz sentido dizer que uma linguagem de programação deva ser uma linguagem decidível?
 Um compilador é uma máquina de tradução de um texto escrito A (entrada) para outro texto escrito B (saída), sendo o texto B semanticamente equivalente ao texto A, caso o texto A esteja correto.

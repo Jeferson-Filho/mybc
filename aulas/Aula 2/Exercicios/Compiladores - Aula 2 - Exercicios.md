@@ -1,7 +1,7 @@
 # Questionário
 
 ### Web page by Gemini
-https://g.co/gemini/share/ba667a3a0d28
+https://gemini.google.com/share/fe94945071ae
 
 ### 1. Que é o processo de varredura e qual sua importância na análise léxica?
 O processo de varredura consiste em um fluxo contínuo de leitura sequencial de caracteres de um arquivo de texto, produzindo tokens quando estados finais são atingidos. Sua importância consiste em simular o comportamento de um autômato finito, consumindo o caractere e avaliando se pertence ou não à linguagem.

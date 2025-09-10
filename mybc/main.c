@@ -1,4 +1,4 @@
-// Versão do professor 28.08
+// Versão do professor Aula 5
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,6 +11,8 @@ int main(void)
 	lookahead = gettoken(source = stdin);
 
 	E();
+
+	printf("\n");
 
 	return 0;
 }

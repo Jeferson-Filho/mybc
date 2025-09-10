@@ -1,4 +1,4 @@
-// Versão do professor 28.08
+// Versão do professor Aula 5
 
 #define MAXIDLEN 256
 
@@ -11,4 +11,7 @@ enum {
 	HEX,
 	FLT,
 };
+
+extern int lineno;
+
 

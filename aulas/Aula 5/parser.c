@@ -7,8 +7,8 @@
 int lookahead; // este é o olho do compilador
 
 // E é o símbolo inicial da gramática LL(1) de expressões simplificadas
-// ominus = ['+''-']
-// oplus = ['+''-']
+// ominus = ⊖ =  ['+''-']
+// oplus = ⊕ =['+''-']
 void E(void)
 {
 	/**/int isnegate = 0;/**/

@@ -5,10 +5,14 @@
 #include <ctype.h>
 #include <lexer.h>
 
+//Variáveis Globais
 char lexeme[MAXIDLEN + 1];
 
 /* Versão extendida de identificador Pascal
+ * 
+ * Verifica se o lexeme é um identificador (ID)
  * ID = [A-Za-z][A-Za-z0-9]*
+ *
  */
 int isID(FILE *tape)
 {
@@ -39,14 +43,21 @@ int isID(FILE *tape)
  *       V
  *     ((0))
  */
+
+ /*
+ * Verifica se o lexeme é um número decimal
+ * DEC = [1-9][0-9]* | 0
+ */
 int isDEC(FILE *tape)
 {
 	if ( isdigit(lexeme[0] = getc(tape)) ) {
 		if (lexeme[0] == '0') {
 			return DEC;
 		}
+
 		int i = 1;
 		while ( isdigit(lexeme[i] = getc(tape)) ) i++;
+
 		ungetc(lexeme[i], tape);
 		lexeme[i] = 0;
 		return DEC;
@@ -57,55 +68,98 @@ int isDEC(FILE *tape)
 	return 0;
 }
 
-// fpoint = DEC\.[0-9]* | \.[0-9][0-9]*
-// flt = fpoint EE? | DEC EE
-// EE = [eE]['+''-']?[0-9][0-9]*
-
+/*
+ * Função que determina se o lexeme contém uma notação exponencial (EE)
+ * EE = [eE]['+''-']?[0-9][0-9]*
+*/
 int isEE(FILE *tape)
 {
 	int i = strlen(lexeme);
-}
+    if (toupper(lexeme[i] = getc(tape)) == 'E' )
+    {
+        i++;
 
-int isNUM(FILE *tape)
-{
-	int token = isDEC(tape);
-	if (token == DEC) {
-		int i = strlen(lexeme);
-		if ( (lexeme[i] = getc(tape)) == '.' ) {
-			i++;
-			while ( isdigit( lexeme[i] = getc(tape) ) ) i++;
-			ungetc(lexeme[i], tape);
-			lexeme[i] = 0;
-			token = FLT;
-		} else {
-			ungetc(lexeme[i], tape);
-			lexeme[i] = 0;
-		}
-	} else {
-		if ( (lexeme[0] = getc(tape)) == '.' ) {
-			if ( isdigit( lexeme[1] = getc(tape) ) ) {
-				token = FLT;
-				int i = 2;
-				while ( isdigit( lexeme[i] = getc(tape) ) ) i++;
-			} else {
-				ungetc(lexeme[1], tape);
-				ungetc(lexeme[0], tape);
-				lexeme[0] = 0;
-				return 0; // not a number
-			}
-		} else {
-			ungetc(lexeme[0], tape);
-			lexeme[0] = 0;
-			return 0; // not a number
-		}
-	}
-	
-	if (isEE(tape)) {
-		token = FLT;
-	}
+        // Checagem de sinal opcional
+        int hassign = 0;
+        if (lexeme[i] = getc(tape) == '+' || lexeme[i] == '-') {
+            i++;
+            hassign = i;
+        } else {
+            ungetc(lexeme[i], tape);
+        }
+
+        // Checagem do digito obrigatorio subsequente
+        if (isdigit(lexeme[i] = getc(tape))) {
+            i++;
+            while ( isdigit(lexeme[i] = getc(tape))) i++;
+            ungetc(lexeme[i], tape);
+            lexeme[i] = 0;
+            return FLT;
+        }
+
+        ungetc(lexeme[i], tape);
+        i--;
+        if(hassign){
+            ungetc(lexeme[i], tape);
+            i--;
+        }
+    }
+    ungetc(lexeme[i], tape);
+    lexeme[i] = 0;
+    return 0;
 }
 
 /*
+ * Função que determina se o lexeme é um numero
+ * podendo ser inteiro ou ponto flutuante 
+*/
+int isNUM(FILE *tape)
+{
+    int token = isDEC(tape);
+    if (token == DEC)
+    {
+        int i = strlen(lexeme);
+        if (lexeme[i] = getc(tape) == '.')
+        {
+            i++;
+            while ( isdigit(lexeme[i] = getc(tape))) i++;
+            ungetc(lexeme[i], tape);
+            lexeme[i] = 0;
+            token = FLT;
+        } else {
+            ungetc(lexeme[i], tape);
+            lexeme[i] = 0;
+        }
+    } else {
+        if (lexeme[0] = getc(tape) == '.')
+        {
+            if (isdigit(lexeme[1] = getc(tape))) {
+                token = FLT;
+                int i = 2;
+                while ( isdigit(lexeme[i] = getc(tape))) i++;
+            } else {
+                ungetc(lexeme[1], tape);
+                ungetc(lexeme[0], tape);
+                lexeme[0] = 0;
+                return 0; // Not a Number
+            }
+        } else {
+            ungetc(lexeme[0], tape);
+            lexeme[0] = 0;
+            return 0; // Not a Number
+        }
+    }
+
+    if (isEE(tape))
+    {
+        token = FLT;
+    }
+
+    return token;
+}
+
+/*
+ * Função que determina se o lexeme é um numero octal 
  * OCT = '0'[0-7]+
  */
 int isOCT(FILE *tape)

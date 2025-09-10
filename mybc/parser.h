@@ -1,10 +1,12 @@
-// Versão do professor 28.08
+// Versão do professor Aula 5
 
 #define ERRTOKEN -0x10000000
 
 extern int lookahead;
 
 extern char lexeme[];
+
+extern int lineno;
 
 extern FILE *source;
 

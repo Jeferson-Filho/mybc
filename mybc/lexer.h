@@ -1,5 +1,3 @@
-// Versão do professor Aula 5
-
 #define MAXIDLEN 256
 
 extern char lexeme[];
@@ -13,5 +11,3 @@ enum {
 };
 
 extern int lineno;
-
-

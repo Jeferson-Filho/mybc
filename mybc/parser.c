@@ -83,6 +83,7 @@ void E(void)
 }
 
 //////////////////////////// parser components /////////////////////////////////
+// TODO: implementar tratamento de erro mais detalhado
 int lookahead;
 void match(int expected)
 {

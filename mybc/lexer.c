@@ -1,5 +1,3 @@
-// Versão do professor 28.08
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -14,6 +12,7 @@ char lexeme[MAXIDLEN + 1];
  * ID = [A-Za-z][A-Za-z0-9]*
  *
  */
+// TODO: Esclarecer linhas da função
 int isID(FILE *tape)
 {
 	if ( isalpha(lexeme[0] = getc(tape)) ) {
@@ -48,6 +47,7 @@ int isID(FILE *tape)
  * Verifica se o lexeme é um número decimal
  * DEC = [1-9][0-9]* | 0
  */
+// TODO: Esclarecer linhas da função
 int isDEC(FILE *tape)
 {
 	if ( isdigit(lexeme[0] = getc(tape)) ) {
@@ -113,6 +113,7 @@ int isEE(FILE *tape)
  * Função que determina se o lexeme é um numero
  * podendo ser inteiro ou ponto flutuante 
 */
+// TODO: Esclarecer linhas da função
 int isNUM(FILE *tape)
 {
     int token = isDEC(tape);
@@ -162,6 +163,7 @@ int isNUM(FILE *tape)
  * Função que determina se o lexeme é um numero octal 
  * OCT = '0'[0-7]+
  */
+// TODO: Esclarecer linhas da função
 int isOCT(FILE *tape)
 {
 	if ( (lexeme[0] = getc(tape)) == '0') {
@@ -186,6 +188,7 @@ int isOCT(FILE *tape)
  *
  * isxdigit == [0-9A-Fa-f]
  */
+// TODO: Esclarecer linhas da função
 int isHEX(FILE *tape)
 {
 	// Para ter um hexa, é necessário que venha o prefixo "0[xX]" seguido de um hexa digito

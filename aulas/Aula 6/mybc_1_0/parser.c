@@ -11,22 +11,68 @@ int lookahead; // este é o olho do compilador
 // ominus = ['+''-']
 // oplus = ['+''-']
 void E(void) {
+	/**/int issignal = 0;/**/
+	/**/int isoplus = 0;/**/
+
 	if(lookahead == '+' || lookahead == '-') {
+		/*1*/(lookahead == '-') && (issignal = lookahead);/**/
 		match(lookahead);
 	}
 	T();
+
+	/*2*/
+	if (issignal) {
+		fprintf(objcode, " %c", issignal);
+		issignal = 0;
+	}
+	/**/
+
 	// { oplus t }
 	while(lookahead == '+' || lookahead == '-') {
-			match(lookahead); T();
+		
+		/*3*/isoplus = lookahead; /**/
+
+		match(lookahead); 
+		T();
+
+		/*4*/
+		fprintf(objcode, " %c", isoplus);
+		isoplus = 0;
+		/**/
 	}
 }
 
 // T -> F { otimes F }
 void T(void) { 
+	int issignal = 0;
+	int isotimes = 0;
+
+	if(lookahead == '+' || lookahead == '-') {
+		/*1*/(lookahead == '-') && (issignal = lookahead);/**/
+		match(lookahead);
+	}
+
 	F();
+
+	/*2*/
+	if (issignal) {
+		fprintf(objcode, " %c", issignal);
+		issignal = 0;
+	}
+	/**/
+
 	// {otimes F}
 	while(lookahead == '*' || lookahead == '/') {
-			match(lookahead); F();
+		
+		/*3*/isotimes = lookahead; /**/
+		
+		match(lookahead); 
+		F();
+
+		/*4*/
+		fprintf(objcode, " %c", isotimes);
+		isotimes = 0;
+		/**/
 	}
 }
 
@@ -38,14 +84,19 @@ void F(void)
 			match('('); E(); match(')');
 			break;
 		case DEC:
+		/**/fprintf(objcode, " %s ", lexeme);/**/
 			match(DEC); break;
 		case OCT:
+		/**/fprintf(objcode, " %s ", lexeme);/**/
 			match(OCT); break;
 		case HEX:
+		/**/fprintf(objcode, " %s ", lexeme);/**/
 			match(HEX); break;
 		case FLT:
+		/**/fprintf(objcode, " %s ", lexeme);/**/
 			match(FLT); break;
 		default:
+		/**/fprintf(objcode, " %s ", lexeme);/**/
 			match(ID);
 	}
 }

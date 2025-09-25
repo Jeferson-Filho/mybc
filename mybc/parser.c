@@ -31,26 +31,26 @@ void E(void)
 			match('('); E(); match(')');
 			break;
 		case DEC:
-			/**/printf(" %s ", lexeme);/**/
+			/**/fprintf(objcode, " %s ", lexeme);/**/
 			match(DEC); break;
 		case OCT:
-			/**/printf(" %s ", lexeme);/**/
+			/**/fprintf(objcode, " %s ", lexeme);/**/
 			match(OCT); break;
 		case HEX:
-			/**/printf(" %s ", lexeme);/**/
+			/**/fprintf(objcode, " %s ", lexeme);/**/
 			match(HEX); break;
 		case FLT:
-			/**/printf(" %s ", lexeme);/**/
+			/**/fprintf(objcode, " %s ", lexeme);/**/
 			match(FLT); break;
 		default:
-			/**/printf(" %s ", lexeme);/**/
+			/**/fprintf(objcode, " %s ", lexeme);/**/
 			match(ID);
 	}
 	// factor end
 	/**/ // isso representa uma acao semantica
 	/**/
 	if(isotimes) {
-		printf(" %c ", isotimes);
+		fprintf(objcode, " %c ", isotimes);
 		isotimes = 0;
 	}
 	/**/
@@ -62,14 +62,14 @@ void E(void)
     // term end
     /**/
     if (isnegate) {
-		printf(" negate ");
+		fprintf(objcode, " negate ");
 		isnegate = 0;
 	}
 	/**/
 
 	/**/
-	if(isoplus) {
-		printf(" %c ", isoplus);
+	if(isoplus /* isoplus :: oplus.t*/) {
+		fprintf(objcode, " %c ", isoplus);
 		isoplus = 0;
 	}
 	/**/

@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #define ERRTOKEN -0x10000000
 
 extern int lookahead;
@@ -7,6 +9,8 @@ extern char lexeme[];
 extern int lineno;
 
 extern FILE *source;
+
+extern FILE *objcode;
 
 extern void match(int);
 

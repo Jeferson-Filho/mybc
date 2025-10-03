@@ -16,6 +16,12 @@ int isID(FILE *tape)
 		while ( isalnum( lexeme[i] = getc(tape) ) ) i++;
 		ungetc(lexeme[i], tape);
 		lexeme[i] = 0;
+		if(strcmp(lexeme, "exit") == 0){
+			return EXIT;
+		}
+		if(strcmp(lexeme, "quit") == 0){
+			return QUIT;
+		}
 		return ID;
 	}
 
@@ -195,11 +201,18 @@ int isHEX(FILE *tape)
 	return 0;
 }
 
+int lineno = 1;
+
 // Skip spaces
 void skipspaces(FILE *tape)
 {
 	int head;
-	while ( isspace(head = getc(tape)) );
+	while ( isspace(head = getc(tape)) ){
+		if(head == '\n'){
+			lineno++;
+			break;
+		};
+	};
 	ungetc(head, tape);
 }
 

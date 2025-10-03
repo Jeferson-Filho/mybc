@@ -10,8 +10,7 @@ int lookahead; // este é o olho do compilador
 // E -> [ ominus ] T { oplus T }
 // ominus = ['+''-']
 // oplus = ['+''-']
-void E(void) 
-{
+void E(void) {
 	/**/int issignal = 0;/**/
 	/**/int isoplus = 0;/**/
 
@@ -44,8 +43,7 @@ void E(void)
 }
 
 // T -> F { otimes F }
-void T(void) 
-{ 
+void T(void) { 
 	/**/int issignal = 0;/**/
 	/**/int isotimes = 0;/**/
 

@@ -9,7 +9,7 @@ int main(void)
 	lookahead = gettoken(source = stdin);
 	objcode = stdout;
 
-	E();
+	mybc();
 
 	return 0;
 }

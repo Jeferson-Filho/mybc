@@ -8,5 +8,8 @@ enum {
 	OCT,
 	HEX,
 	FLT,
+	EXIT,
+	QUIT,
 };
 
+extern int lineno;

@@ -18,7 +18,6 @@ Uma linguagem de programação deva ser uma linguagem decidível, pois o compila
 <img src="image.png" alt="alt text" width="320"/>
 
 ### 3. Qual o papel de um analisador léxico num compilador? Podemos dizer que um parser é um decisor sintático de uma linguagem de programação? Justifique.
-Qual o papel de um analisador léxico num compilador?
 Receber uma sequência de carateres e, enquanto reconhecer como padrão atendido pela sequência de carateres, os transformar em tokens para o analisador sintático.
 
 Podemos dizer que um parser é um decisor sintático de uma linguagem de programação? Justifique

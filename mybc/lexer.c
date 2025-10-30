@@ -2,10 +2,13 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <lexer.h>
+#include <string.h>
+#include <tokens.h>
 
 //Variáveis Globais
 char lexeme[MAXIDLEN + 1];
 int lineno = 1;
+int columno = 1;
 
 /* Versão extendida de identificador Pascal
  * 
@@ -21,12 +24,10 @@ int isID(FILE *tape)
 		while ( isalnum( lexeme[i] = getc(tape) ) ) i++;
 		ungetc(lexeme[i], tape);
 		lexeme[i] = 0;
-		if(strcmp(lexeme, "exit") == 0)
-		{
+		if(strcmp(lexeme, "exit") == 0){
 			return EXIT;
 		}
-		if(strcmp(lexeme, "quit") == 0)
-		{
+		if(strcmp(lexeme, "quit") == 0){
 			return QUIT;
 		}
 		return ID;
@@ -59,24 +60,21 @@ int isID(FILE *tape)
 // TODO: Esclarecer linhas da função
 int isDEC(FILE *tape)
 {
-	if ( isdigit(lexeme[0] = getc(tape)) ) 
-	{
-		if (lexeme[0] == '0') 
-		{
+	if ( isdigit(lexeme[0] = getc(tape)) ) {
+		if (lexeme[0] == '0') {
 			return DEC;
 		}
 		int i = 1;
 		while ( isdigit(lexeme[i] = getc(tape)) ) i++;
-
 		ungetc(lexeme[i], tape);
 		lexeme[i] = 0;
 		return DEC;
 	}
+
 	ungetc(lexeme[0], tape);
 	lexeme[0] = 0;
 	return 0;
 }
-
 /*
  * Função que determina se o lexeme contém uma notação exponencial (EE)
  * EE = [eE]['+''-']?[0-9][0-9]*
@@ -129,49 +127,45 @@ int isEE(FILE *tape)
 // TODO: Esclarecer linhas da função
 int isNUM(FILE *tape)
 {
-    int token = isDEC(tape);
-    if (token == DEC)
-    {
-        int i = strlen(lexeme);
-        if (lexeme[i] = getc(tape) == '.')
-        {
-            i++;
-            while ( isdigit(lexeme[i] = getc(tape))) i++;
-            ungetc(lexeme[i], tape);
-            lexeme[i] = 0;
-            token = FLT;
-        } else {
-            ungetc(lexeme[i], tape);
-            lexeme[i] = 0;
-        }
-    } else {
-        if (lexeme[0] = getc(tape) == '.')
-        {
-            if (isdigit(lexeme[1] = getc(tape))) 
-			{
-                token = FLT;
-                int i = 2;
-                while ( isdigit(lexeme[i] = getc(tape))) i++;
-            } else {
-                ungetc(lexeme[1], tape);
-                ungetc(lexeme[0], tape);
-                lexeme[0] = 0;
-                return 0; // Not a Number
-            }
-        } else {
-            ungetc(lexeme[0], tape);
-            lexeme[0] = 0;
-            return 0; // Not a Number
-        }
-    }
+	int token = isDEC(tape);
+	if (token == DEC) {
+		int i = strlen(lexeme);
+		if ( (lexeme[i] = getc(tape)) == '.' ) {
+			i++;
+			while ( isdigit( lexeme[i] = getc(tape) ) ) i++;
+			ungetc(lexeme[i], tape);
+			lexeme[i] = 0;
+			token = FLT;
+		} else {
+			ungetc(lexeme[i], tape);
+			lexeme[i] = 0;
+		}
+	} else {
+		if ( (lexeme[0] = getc(tape)) == '.' ) {
+			if ( isdigit( lexeme[1] = getc(tape) ) ) {
+				token = FLT;
+				int i = 2;
+				while ( isdigit( lexeme[i] = getc(tape) ) ) i++;
+			} else {
+				ungetc(lexeme[1], tape);
+				ungetc(lexeme[0], tape);
+				lexeme[0] = 0;
+				return 0; // not a number
+			}
+		} else {
+			ungetc(lexeme[0], tape);
+			lexeme[0] = 0;
+			return 0; // not a number
+		}
+	}
+	
+	if (isEE(tape)) {
+		token = FLT;
+	}
 
-    if (isEE(tape))
-    {
-        token = FLT;
-    }
-
-    return token;
+	return token;
 }
+
 
 int isASGN(FILE *tape) {
 
@@ -262,6 +256,7 @@ void skipspaces(FILE *tape)
 	while ( isspace(head = getc(tape)) ){
 		if(head == '\n'){
 			lineno++;
+			columno = 1;
 			break;
 		};
 	};
@@ -273,7 +268,6 @@ int gettoken(FILE *source)
 	int token;
 
 	skipspaces(source);
-
 	if ( (token = isID(source)) ) return token;
 	if ( (token = isNUM(source)) ) return token;
 	if ( (token = isASGN(source)) ) return token;

@@ -6,8 +6,6 @@
 #include <parser.h>
 
 int lookahead; // este é o olho do compilador
-int lineno = 1;
-int columno = 1;
 
 // Interpretador de comando
 //
@@ -58,14 +56,13 @@ double acc; //acumulador
 #define STACKSIZE 1024
 double stack[STACKSIZE];
 int sp = -1;
-
 // tabela de símbolos comom dicionário dos valores armazenados na memória virtual
 #define MAXSTENTRIES 4096
 char symtab[MAXSTENTRIES][MAXIDLEN+1];
 int symtab_next_entry = 0; //uso: strcpy(symtab[symtab_next_entry], name)
 double vmem[MAXSTENTRIES];
-int address;
 
+int address;
 double recall(char const *name) {
 	// busca bottom-up a variável em name
 	for (address = symtab_next_entry - 1; address > -1; address--) {
@@ -76,7 +73,7 @@ double recall(char const *name) {
 	// variável ainda não existe
 	address = symtab_next_entry++;
 	strcpy(symtab[address], name);
-	return 0.e+00;//só para enfatizar que é ponto flutuante
+	return 0.e+00;//só para enfatizarque é ponto flutuante
 }
 
 void store(char const *name) {
@@ -180,16 +177,12 @@ void E(void)
 int lookahead;
 void match(int expected)
 {
+	columno++;
 	if (lookahead == expected) {
 		lookahead = gettoken(source);
-		if(expected == '\n'){
-			columno = 1;
-			lineno++;
-		} else {
-			columno++;
-		}
 	} else {
-		fprintf(stderr, "ERROR line %d column %d.\nToken mismatch, expected %c but received %c\n", lineno, columno, expected, lookahead);
+		
+		fprintf(stderr, "ERROR at line %d column %d.\nToken mismatch, expected '%d' but received '%d'\n", lineno, columno, expected, lookahead);
 		exit(ERRTOKEN);
 	}
 }

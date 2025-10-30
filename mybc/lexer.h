@@ -3,3 +3,4 @@
 extern char lexeme[];
 
 extern int lineno;
+extern int columno;

@@ -1,3 +1,4 @@
+#pragma once
 #define ERRTOKEN -0x10000000
 
 extern int lookahead;

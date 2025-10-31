@@ -39,8 +39,8 @@ void cmd(void)
 		case '(':
 		case DEC:
 		case FLT:
-		case HEX:
-		case OCT:
+		//case HEX:
+		//case OCT:
 		case ID:
 			E();
 			printf("%lg\n", acc);

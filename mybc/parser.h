@@ -8,6 +8,7 @@ extern char lexeme[];
 
 extern int lineno;
 extern int columno;
+extern int parse_error;
 
 extern FILE *source;
 

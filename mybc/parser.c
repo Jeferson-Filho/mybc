@@ -6,6 +6,7 @@
 #include <parser.h>
 
 int lookahead; // este é o olho do compilador
+int parse_error = 0; // indica se ocorreu erro no comando atual
 
 // Interpretador de comando
 //
@@ -43,7 +44,11 @@ void cmd(void)
 		//case OCT:
 		case ID:
 			E();
-			printf("%lg\n", acc);
+			if (!parse_error) {
+    			printf("%lg\n", acc);
+			} else {
+    			parse_error = 0; // Reseta parse_error para o próximo comando
+			}
 			break;
 		default:
 			;
@@ -56,6 +61,7 @@ double acc; //acumulador
 #define STACKSIZE 1024
 double stack[STACKSIZE];
 int sp = -1;
+
 // tabela de símbolos comom dicionário dos valores armazenados na memória virtual
 #define MAXSTENTRIES 4096
 char symtab[MAXSTENTRIES][MAXIDLEN+1];
@@ -73,11 +79,12 @@ double recall(char const *name) {
 	// variável ainda não existe
 	address = symtab_next_entry++;
 	strcpy(symtab[address], name);
-	return 0.e+00;//só para enfatizarque é ponto flutuante
+	return 0.e+00;//só para enfatizar que é ponto flutuante
 }
 
 void store(char const *name) {
-	recall(name);// vai localizar o endereço da variável na memória
+	// vai localizar o endereço da variável na memória
+	recall(name);
 	vmem[address] = acc;
 }
 
@@ -172,17 +179,65 @@ void E(void)
 }
 
 //////////////////////////// parser components /////////////////////////////////
-//TODO: corrigir mensagem de erro, adicionar linha e coluna
 //TODO: implementar signalhandler para comandos
 int lookahead;
 void match(int expected)
 {
-	columno++;
-	if (lookahead == expected) {
-		lookahead = gettoken(source);
-	} else {
-		
-		fprintf(stderr, "ERROR at line %d column %d.\nToken mismatch, expected '%d' but received '%d'\n", lineno, columno, expected, lookahead);
-		exit(ERRTOKEN);
-	}
+
+	if (parse_error) return; // já houve erro — ignora novas verificações
+
+    if (lookahead == expected) {
+        lookahead = gettoken(source);
+		columno++;
+        return;
+    }
+
+
+	char expectedName[64];
+    char receivedName[64];
+    // Nome legível do token esperado
+	// Tenta traduzir tokens conhecidos
+    switch (expected) {
+        case ID:   strcpy(expectedName, "identifier"); break;
+        case DEC:  strcpy(expectedName, "integer");    break;
+        case FLT:  strcpy(expectedName, "float");      break;
+        case ASGN: strcpy(expectedName, "':=' (assignment)"); break;
+        case EXIT: strcpy(expectedName, "'exit'");     break;
+        case QUIT: strcpy(expectedName, "'quit'");     break;
+        case EOF:  strcpy(expectedName, "end of input"); break;
+        default:
+            if (expected >= 32 && expected <= 126) {
+                snprintf(expectedName, sizeof(expectedName), "'%c'", expected);
+            } else {
+                snprintf(expectedName, sizeof(expectedName), "token %d", expected);
+            }
+            break;
+    }
+	// Nome legível do token recebido
+    if (lookahead == EOF) {
+        strcpy(receivedName, "end of input");
+    } else if (lookahead >= 32 && lookahead <= 126) {
+        snprintf(receivedName, sizeof(receivedName), "'%c'", lookahead);
+    } else {
+        // Tenta traduzir tokens conhecidos
+        switch (lookahead) {
+            case ID: strcpy(receivedName, "identifier"); break;
+            case DEC: strcpy(receivedName, "integer"); break;
+            case FLT: strcpy(receivedName, "float"); break;
+            case ASGN: strcpy(receivedName, "':=' (assignment)"); break;
+            case EXIT: strcpy(receivedName, "'exit'"); break;
+            case QUIT: strcpy(receivedName, "'quit'"); break;
+            default: snprintf(receivedName, sizeof(receivedName), "token %d", lookahead); break; //Token desconhecidos
+        }
+    }
+
+    // Mensagem de erro padronizada
+    fprintf(stderr, "\nERROR at line %d, column %d.\n", lineno, columno);
+    fprintf(stderr, "Token mismatch: expected %s but received %s.\n", expectedName, receivedName);
+
+	parse_error = 1;
+	while (lookahead != EOF && lookahead != ';' && lookahead != '\n') {
+        lookahead = gettoken(source);
+    }
+	return;
 }

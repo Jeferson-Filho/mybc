@@ -22,6 +22,7 @@ int isID(FILE *tape)
 	if ( isalpha(lexeme[0] = getc(tape)) ) {
 		int i = 1;
 		while ( isalnum( lexeme[i] = getc(tape) ) ) i++;
+		columno = columno + i -1;
 		ungetc(lexeme[i], tape);
 		lexeme[i] = 0;
 		if(strcmp(lexeme, "exit") == 0){
@@ -102,6 +103,7 @@ int isEE(FILE *tape)
 		{
             i++;
             while ( isdigit(lexeme[i] = getc(tape))) i++;
+			columno = columno + i -1;
             ungetc(lexeme[i], tape);
             lexeme[i] = 0;
             return FLT;
@@ -133,6 +135,7 @@ int isNUM(FILE *tape)
 		if ( (lexeme[i] = getc(tape)) == '.' ) {
 			i++;
 			while ( isdigit( lexeme[i] = getc(tape) ) ) i++;
+			columno = columno + i - 1;
 			ungetc(lexeme[i], tape);
 			lexeme[i] = 0;
 			token = FLT;
@@ -146,6 +149,7 @@ int isNUM(FILE *tape)
 				token = FLT;
 				int i = 2;
 				while ( isdigit( lexeme[i] = getc(tape) ) ) i++;
+				columno = columno + i;
 			} else {
 				ungetc(lexeme[1], tape);
 				ungetc(lexeme[0], tape);
@@ -254,6 +258,7 @@ void skipspaces(FILE *tape)
 {
 	int head;
 	while ( isspace(head = getc(tape)) ){
+		columno++;
 		if(head == '\n'){
 			lineno++;
 			columno = 1;
@@ -263,11 +268,37 @@ void skipspaces(FILE *tape)
 	ungetc(head, tape);
 }
 
+// Ignora input de setas
+// Arrow = '^' '[' '[' 'A' | 'B' | 'C' | 'D' 
+void skipArrow(FILE *tape)
+{
+	while ((lexeme[0] = getc(tape)) == 0x1B) { // ESC (27)
+		lexeme[1] = getc(tape);
+		lexeme[2] = getc(tape);
+
+		if (lexeme[1] == '[' && 
+			(lexeme[2] == 'A' || lexeme[2] == 'B' || lexeme[2] == 'C' || lexeme[2] == 'D')) {
+			columno += 3;
+		} else {
+			// Não é uma seta, devolve o que foi lido
+			ungetc(lexeme[2], tape);
+			ungetc(lexeme[1], tape);
+			ungetc(lexeme[0], tape);
+			lexeme[0] = 0;
+			break;
+		}
+	}
+
+	ungetc(lexeme[0], tape);
+	lexeme[0] = 0;
+}
+
 int gettoken(FILE *source)
 {
 	int token;
 
 	skipspaces(source);
+	skipArrow(source);
 	if ( (token = isID(source)) ) return token;
 	if ( (token = isNUM(source)) ) return token;
 	if ( (token = isASGN(source)) ) return token;

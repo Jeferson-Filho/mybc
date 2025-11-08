@@ -4,9 +4,20 @@
 #include <lexer.h>
 #include <tokens.h>
 #include <parser.h>
+#include <signal.h>
+
 
 int lookahead; // este é o olho do compilador
 int parse_error = 0; // indica se ocorreu erro no comando atual
+
+// Manipulador para Ctrl+C (SIGINT)
+void handleSigint(int sig)
+{
+    if (sig == SIGINT) {
+        printf("\n");
+        fflush(stdout);
+    }
+}
 
 // Interpretador de comando
 //
@@ -188,7 +199,6 @@ void match(int expected)
 
     if (lookahead == expected) {
         lookahead = gettoken(source);
-		columno++;
         return;
     }
 
@@ -209,7 +219,7 @@ void match(int expected)
             if (expected >= 32 && expected <= 126) {
                 snprintf(expectedName, sizeof(expectedName), "'%c'", expected);
             } else {
-                snprintf(expectedName, sizeof(expectedName), "token %d", expected);
+                snprintf(expectedName, sizeof(expectedName), "token %d", expected); //Token desconhecido
             }
             break;
     }
@@ -227,7 +237,7 @@ void match(int expected)
             case ASGN: strcpy(receivedName, "':=' (assignment)"); break;
             case EXIT: strcpy(receivedName, "'exit'"); break;
             case QUIT: strcpy(receivedName, "'quit'"); break;
-            default: snprintf(receivedName, sizeof(receivedName), "token %d", lookahead); break; //Token desconhecidos
+            default: snprintf(receivedName, sizeof(receivedName), "token %d", lookahead); break; //Token desconhecido
         }
     }
 

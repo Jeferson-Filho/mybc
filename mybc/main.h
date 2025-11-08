@@ -5,3 +5,4 @@ extern int gettoken(FILE *); // a ser definido no lexer
 
 extern double acc;
 extern void mybc(void);
+extern void handleSigint(void);

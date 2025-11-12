@@ -26,7 +26,8 @@ This project aims to reinforce compiler theory by applying parsing and evaluatio
     ```
 2. Compile the project:
     ```bash
-    gcc -o mybc main.c
+    cd mybc
+    make
     ```
 3. Run the calculator:
     ```bash

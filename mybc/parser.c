@@ -194,14 +194,12 @@ void E(void)
 int lookahead;
 void match(int expected)
 {
-
 	if (parse_error) return; // já houve erro — ignora novas verificações
 
     if (lookahead == expected) {
         lookahead = gettoken(source);
         return;
     }
-
 
 	char expectedName[64];
     char receivedName[64];
@@ -216,6 +214,7 @@ void match(int expected)
         case QUIT: strcpy(expectedName, "'quit'");     break;
         case EOF:  strcpy(expectedName, "end of input"); break;
         default:
+			// Para caracteres ASCII imprimíveis, exibe o próprio caractere
             if (expected >= 32 && expected <= 126) {
                 snprintf(expectedName, sizeof(expectedName), "'%c'", expected);
             } else {
@@ -227,6 +226,7 @@ void match(int expected)
     if (lookahead == EOF) {
         strcpy(receivedName, "end of input");
     } else if (lookahead >= 32 && lookahead <= 126) {
+        // Caracteres ASCII imprimíveis
         snprintf(receivedName, sizeof(receivedName), "'%c'", lookahead);
     } else {
         // Tenta traduzir tokens conhecidos
@@ -245,7 +245,11 @@ void match(int expected)
     fprintf(stderr, "\nERROR at line %d, column %d.\n", lineno, columno);
     fprintf(stderr, "Token mismatch: expected %s but received %s.\n", expectedName, receivedName);
 
+	// Marca estado de erro para ignorar verificações subsequentes
 	parse_error = 1;
+	
+	// Recuperação de erro (error recovery/synchronization):
+	// Descarta tokens até encontrar ponto de sincronização
 	while (lookahead != EOF && lookahead != ';' && lookahead != '\n') {
         lookahead = gettoken(source);
     }

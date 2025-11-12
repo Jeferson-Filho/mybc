@@ -1,0 +1,4 @@
+mybc/lexer.o
+mybc/parser.o
+mybc/mybc
+mybc/main.o

@@ -16,7 +16,7 @@ extern void match(int);
 
 extern int gettoken(FILE *);
 
-extern void handleSigint(void);
+extern void handleSigint(int sig);
 extern void mybc(void);
 extern void cmd(void);
 extern void E(void);

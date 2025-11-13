@@ -1,5 +1,11 @@
 # Documentação Didática – Interpretador *mybc*
 
+## Grupo
+
+- Caio Bohlhalter
+- Jeferson Patrick
+- Lucas Quintas
+
 ## Sumário
 
 1. [Analisador Léxico (`lexer.c`)](#analisador-léxico-lexerc)  

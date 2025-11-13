@@ -97,7 +97,7 @@ int isEE(FILE *tape)
 		i++;
         // Checagem de sinal opcional
         int hassign = 0;
-        if (lexeme[i] = getc(tape) == '+' || lexeme[i] == '-') 
+        if ((lexeme[i] = getc(tape)) == '+' || lexeme[i] == '-') 
 		{
             i++;
             hassign = i;
@@ -158,6 +158,11 @@ int isNUM(FILE *tape)
 			ungetc(lexeme[i], tape);
 			lexeme[i] = 0;
 		}
+		
+		// Após reconhecer DEC ou FLT com ponto, verifica se há notação exponencial
+		if (isEE(tape)) {
+			token = FLT;
+		}
 	} else {
 		// Não começou com dígito, verifica se começa com ponto (ex: .5)
 		if ( (lexeme[0] = getc(tape)) == '.' ) {
@@ -167,6 +172,11 @@ int isNUM(FILE *tape)
 				while ( isdigit( lexeme[i] = getc(tape) ) ) i++;
 				// Modifica 'columno' para rastrear a coluna do erro
 				columno = columno + i;
+				
+				// Verifica se há notação exponencial após ponto flutuante
+				if (isEE(tape)) {
+					token = FLT;
+				}
 			} else {
 				// Não há dígito após ponto, não é um número
 				ungetc(lexeme[1], tape);
@@ -180,11 +190,6 @@ int isNUM(FILE *tape)
 			lexeme[0] = 0;
 			return 0;
 		}
-	}
-	
-	// Se não é DEC e nem começa com dígito, verifica se é notação exponencial
-	if (isEE(tape)) {
-		token = FLT;
 	}
 
 	return token;

@@ -258,5 +258,4 @@ void match(int expected)
 	while (lookahead != EOF && lookahead != ';' && lookahead != '\n') {
         lookahead = gettoken(source);
     }
-	return;
 }

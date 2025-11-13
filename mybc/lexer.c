@@ -301,9 +301,11 @@ void skipspaces(FILE *tape)
 		// Modifica 'columno' para rastrear a coluna do erro
 		if(head == '\t'){
 			// Caso leia tab, aumenta em 2 o tamanho ao invés de 1
+			columno+=8;
+		}
+		else{
 			columno++;
 		}
-		columno++;
 		// Se encontrar quebra de linha, atualiza 'lineno' e 'columno' para rastrear a posição do erro
 		if(head == '\n'){
 			lineno++;

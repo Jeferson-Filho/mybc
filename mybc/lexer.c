@@ -1,3 +1,10 @@
+/*
+Grupo 2
+- Caio Bohlhalter de Souza
+- Jeferson Patrick Dietrich Filho
+- Lucas Quintas Honorato
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>

@@ -31,9 +31,11 @@ int isID(FILE *tape)
 		if(strcmp(lexeme, "exit") == 0){
 			return EXIT;
 		}
+
 		if(strcmp(lexeme, "quit") == 0){
 			return QUIT;
 		}
+
 		// Identificador válido (não reservado)
 		return ID;
 	}
@@ -112,7 +114,7 @@ int isEE(FILE *tape)
 			i++;
 			while ( isdigit(lexeme[i] = getc(tape))) i++;
 			// Modifica 'columno' para rastrear a coluna do erro
-			columno = columno + i -1;
+			columno = columno + i - 1;
 			ungetc(lexeme[i], tape);
 			lexeme[i] = 0;
 			// Notação exponencial válida, é um número flutuante
@@ -348,7 +350,6 @@ int gettoken(FILE *source)
 	if ( (token = isID(source)) ) return token;
 	if ( (token = isNUM(source)) ) return token;
 	if ( (token = isASGN(source)) ) return token;
-
 	//	if ( (token = isHEX(source)) ) return token;
 	//	if ( (token = isOCT(source)) ) return token;
 

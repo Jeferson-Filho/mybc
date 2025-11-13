@@ -190,7 +190,6 @@ void E(void)
 }
 
 //////////////////////////// parser components /////////////////////////////////
-//TODO: implementar signalhandler para comandos
 int lookahead;
 void match(int expected)
 {

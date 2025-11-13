@@ -1,0 +1,210 @@
+========================================
+TEST CASES PARA VALIDAR RASTREAMENTO DE ERROS
+Foco: Contagem de Linhas (lineno) e Colunas (columno)
+========================================
+
+OBSERVAÇÕES IMPORTANTES:
+- lineno: conta linhas começando em 1
+- columno: conta colunas começando em 1
+- Espaços, tabs, etc contam como caracteres
+- Após quebra de linha (\n), columno reseta para 1
+
+
+========== TESTE 1: RASTREAMENTO DE COLUNA (LINHA ÚNICA) ==========
+
+Caso 1.1: Erro na primeira coluna
+Entrada: ^ 
+Análise: 
+  - ^ é o primeiro caractere (coluna 1)
+  - Não é ID, DEC, FLT, ASGN
+  - Será devolvido como token ASCII
+  - Parser espera expressão e recebe ^
+  - Erro esperado: line 1, column 1
+Esperado: ERROR at line 1, column 1
+
+
+Caso 1.2: Erro na coluna 3
+Entrada: 1 ^
+Análise:
+  - Caracteres: '1' (col 1), ' ' (col 2), '^' (col 3)
+  - '1' é DEC (sucesso)
+  - Parser termina E() e volta à cmd()
+  - Encontra '^' na coluna 3
+  - Erro esperado: line 1, column 3
+Esperado: ERROR at line 1, column 3
+
+
+Caso 1.3: Erro na coluna 5
+Entrada: 1 + 2 ^
+Análise:
+  - '1' (col 1) = DEC
+  - ' ' (col 2) = espaço
+  - '+' (col 3) = operador
+  - ' ' (col 4) = espaço
+  - '2' (col 5) = DEC
+  - ' ' (col 6) = espaço
+  - '^' (col 7) = ERRO
+  - Erro esperado: line 1, column 7
+Esperado: ERROR at line 1, column 7
+
+
+Caso 1.4: Erro na coluna 11
+Entrada: a b c d e
+Análise:
+  - 'a' (col 1) = ID
+  - ' ' (col 2) = espaço
+  - 'b' (col 3) = ID (ERRO - parser espera fim de expressão)
+  - Erro esperado: line 1, column 3
+Esperado: ERROR at line 1, column 3
+
+
+Caso 1.5: Múltiplos espaços antes do erro
+Entrada: 1       ^
+Análise:
+  - '1' (col 1) = DEC
+  - 7 espaços (col 2-8)
+  - '^' (col 9) = ERRO
+  - Erro esperado: line 1, column 9
+Esperado: ERROR at line 1, column 9
+
+
+========== TESTE 2: RASTREAMENTO DE LINHA (MÚLTIPLAS LINHAS) ==========
+
+Caso 2.1: Erro na linha 2, coluna 1
+Entrada:
+1
+^
+
+Análise:
+  - Linha 1: '1' (col 1) = DEC, '\n'
+  - Linha 2: '^' (col 1) = ERRO
+  - Erro esperado: line 2, column 1
+Esperado: ERROR at line 2, column 1
+
+
+Caso 2.2: Erro na linha 2, coluna 5
+Entrada:
+1 + 2
+abc ^
+
+Análise:
+  - Linha 1: '1' + '2' = 3, '\n'
+  - Linha 2: 'a' (col 1), 'b' (col 2), 'c' (col 3), ' ' (col 4), '^' (col 5)
+  - Erro esperado: line 2, column 5
+Esperado: ERROR at line 2, column 5
+
+
+Caso 2.3: Erro na linha 3, coluna 3
+Entrada:
+1
+2
+  ^
+
+Análise:
+  - Linha 1: '1', '\n'
+  - Linha 2: '2', '\n'
+  - Linha 3: ' ' (col 1), ' ' (col 2), '^' (col 3)
+  - Erro esperado: line 3, column 3
+Esperado: ERROR at line 3, column 3
+
+
+Caso 2.4: Múltiplas linhas com diversas posições
+Entrada:
+1 + 2
+3 * 4
+  5 - ^
+
+Análise:
+  - Linha 1: '1 + 2' (sucesso), '\n'
+  - Linha 2: '3 * 4' (sucesso), '\n'
+  - Linha 3: ' ' (col 1), ' ' (col 2), '5' (col 3), ' ' (col 4), '-' (col 5), ' ' (col 6), '^' (col 7)
+  - Erro esperado: line 3, column 7
+Esperado: ERROR at line 3, column 7
+
+
+========== TESTE 3: ESPAÇAMENTO E COLUNA ==========
+
+Caso 3.1: Identificador seguido de erro
+Entrada: abc^
+Análise:
+  - 'a' (col 1)
+  - 'b' (col 2)
+  - 'c' (col 3)
+  - '^' (col 4) = ERRO (parser espera :=, sinal, ou fim)
+  - Erro esperado: line 1, column 4
+Esperado: ERROR at line 1, column 4
+
+
+Caso 3.2: Número decimal seguido de erro
+Entrada: 123abc
+Análise:
+  - '1' (col 1)
+  - '2' (col 2)
+  - '3' (col 3)
+  - 'a' (col 4) = ID (ERRO)
+  - Erro esperado: line 1, column 4
+Esperado: ERROR at line 1, column 4
+
+
+Caso 3.3: Tab conta como 1 coluna
+Entrada: 1[TAB]^
+Análise:
+  - '1' (col 1)
+  - [TAB] (col 2)
+  - '^' (col 3)
+  - Erro esperado: line 1, column 3
+Esperado: ERROR at line 1, column 3
+
+
+========== TESTE 4: CASOS COMPLEXOS ==========
+
+Caso 4.1: Erro após variável
+Entrada: x := 1 2
+Análise:
+  - 'x' (col 1) = ID
+  - ' ' (col 2)
+  - ':=' (col 3-4) = ASGN
+  - ' ' (col 5)
+  - '1' (col 6) = DEC
+  - ' ' (col 7)
+  - '2' (col 8) = ERRO (esperava ; ou \n ou EOF)
+  - Erro esperado: line 1, column 8
+Esperado: ERROR at line 1, column 8
+
+
+Caso 4.2: Múltiplas linhas com atribuição
+Entrada:
+x := 1
+y := 2 ^
+
+Análise:
+  - Linha 1: 'x := 1', '\n'
+  - Linha 2: 'y' (col 1), ' ' (col 2), ':=' (col 3-4), ' ' (col 5), '2' (col 6), ' ' (col 7), '^' (col 8)
+  - Erro esperado: line 2, column 8
+Esperado: ERROR at line 2, column 8
+
+
+Caso 4.3: Erro em número exponencial malformado
+Entrada: 1e
+Análise:
+  - '1' (col 1)
+  - 'e' (col 2) = ID (não é exponencial pois sem +/- e dígito)
+  - Erro esperado: line 1, column 2
+Esperado: ERROR at line 1, column 2
+
+
+========== PROCEDIMENTO DE TESTE ==========
+1. Salvar cada caso em um arquivo .txt separado
+2. Executar: echo "$(cat caso.txt)" | ./mybc
+3. Capturar stderr (onde os erros são impressos)
+4. Comparar lineno e columno com o esperado
+5. Registrar PASS/FAIL
+
+
+========== RESUMO DO QUE SERÁ TESTADO ==========
+- Coluna inicial de erro em linha única ✓
+- Coluna com múltiplos espaços ✓
+- Linha e coluna em múltiplas linhas ✓
+- Reset de coluna após quebra de linha ✓
+- Espaçamento especial (tab) ✓
+- Casos complexos com múltiplos tokens ✓

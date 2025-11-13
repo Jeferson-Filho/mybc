@@ -15,7 +15,7 @@ mostlyclean: clean
 
 # Cria um arquivo tar
 targz:
-	tar zcvf mybc_grupo2.tar.gz Makefile *.[ch]
+	tar zcvf mybc_grp02.tar.gz Makefile *.[ch] *.md
 
 # pra extrair:
 # 	tar zxvf mybc.tar.gz

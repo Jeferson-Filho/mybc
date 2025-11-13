@@ -14,8 +14,7 @@ int parse_error = 0; // indica se ocorreu erro no comando atual
 void handleSigint(int sig)
 {
     if (sig == SIGINT) {
-        printf("\n");
-        fflush(stdout);
+		fprintf(stderr,"\b \b\b \b \n");
     }
 }
 
@@ -33,7 +32,6 @@ void mybc(void)
 		cmd();
 
 	}
-
 	match(EOF);
 }
 
@@ -105,7 +103,7 @@ void store(char const *name) {
 // oplus = ['+''-']
 void E(void)
 {
-	/*0*/int varname[MAXIDLEN+1];/**/
+	/*0*/char varname[MAXIDLEN+1];/**/
 	/*1*/int isnegate = 0;/**/
 	/*2*/int isotimes = 0;/**/
 	/*3*/int isoplus = 0;/**/
@@ -196,6 +194,7 @@ void match(int expected)
 	if (parse_error) return; // já houve erro — ignora novas verificações
 
     if (lookahead == expected) {
+		columno += strlen(lexeme);
         lookahead = gettoken(source);
         return;
     }
@@ -241,7 +240,7 @@ void match(int expected)
     }
 
     // Mensagem de erro padronizada
-    fprintf(stderr, "\nERROR at line %d, column %d.\n", lineno, columno);
+    fprintf(stderr, "ERROR at line %d, column %d.\n", lineno, columno);
     fprintf(stderr, "Token mismatch: expected %s but received %s.\n", expectedName, receivedName);
 
 	// Marca estado de erro para ignorar verificações subsequentes
